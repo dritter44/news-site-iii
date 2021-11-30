@@ -19,16 +19,3 @@ function ArticleList(props) {
 export default ArticleList;
 
 
-// Functional solution:
-// function ArticleList({ articles, handleTitleClick }) {
-//   return (
-//     <ListGroup>
-//       {articles.map((article, index) => (
-//         <ListGroupItem>
-//           <ArticleTeaser {...article} id={ index + 1 }
-//              handleTitleClick={handleTitleClick} />
-//         </ListGroupItem>
-//       ))}
-//     </ListGroup>
-//   );
-// }
