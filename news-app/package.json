@@ -16,7 +16,7 @@
     "loopback-boot": "^3.3.1",
     "loopback-component-explorer": "^2.7.0",
     "loopback-connector-postgresql": "^5.3.0",
-    "loopback-remote-routing": "^0.0.1",
+    "loopback-remote-routing": "^1.5.2",
     "node-fetch": "^2.6.1",
     "react": "^17.0.2",
     "react-bootstrap": "^2.0.0",
