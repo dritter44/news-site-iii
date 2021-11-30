@@ -3,7 +3,7 @@
 ## High Level Objectives
 
   1. Create a JavaScript module that handles retrieving article data from an API using [Fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch).
-  2. Integrate the module above into the News Site app using React Component LifeCycle Methods and the `useEffect()` hook.
+  2. Integrate the module above into the News Site app using the `useEffect()` hook.
   3. Slightly refactor the AppNav & ArticleDetails components
 
 ## Initial Setup
@@ -121,39 +121,45 @@ The first thing to know is that traditional DOM manipulation is very slow. React
 
 Since Facebook created React, we'll use their web app as an example. Looking at a facebook user's homepage, it's reasonable to assume that there are different components for stories, newsfeed, chat, etc. If a new story is added to the page, only the stories component needs to know about the state change and update itself and/or its child components accordingly. Or if you scroll down your newsfeed and trigger a new fetch for more posts (via infinite scroll), only the newsfeed component (and/or its child components) needs to update.
 
-### Component Lifecyle Methods
-With its initial introduction of the Component class, React baked in [Component Lifecyle Methods](https://programmingwithmosh.com/javascript/react-lifecycle-methods/) (deeper dive [here](https://blog.bitsrc.io/react-16-lifecycle-methods-how-and-when-to-use-them-f4ad31fb2282)). These lifecycle methods are basically the events that occur from the birth of a React component (when it is first mounted on the DOM) to its "death" (when it is unmounted from the DOM). To be clear: Component Lifecycle Methods are only available on React class components - they are methods built into the Component class.
-
-We've actually already been using one of these lifecycle methods, `render()`. `render()` runs when the class component is first mounted on the DOM, and again whenever it is updated.
-
-In order to fetch our articles data and update the component's state, we're going to use another component lifecyle method called `componentDidMount`, which runs only once when the component is initially mounted on the DOM. Typically API calls are made in the `componentDidMount` method. Example:
+### Component Lifecycle Methods
+We'll be learning about useEffect() hook later on, but we'll need to use it for our API call.
 
 ```javascript
-class Component extends React.Component {
-  state = {
-    someDataFromAnAPI: null
-  }
+import { useState, useEffect } from 'react'
 
-  async componentDidMount() {
-    try {
-      const jsonResponse = await CallAPI()
-      this.setState({
-        someDataFromAnAPI: jsonResponse
-      });
-    } catch (error) {
-      console.error('Error occurred fetching data: ', error);
+function Component {
+  const [someDataFromAnAPI, setSomeDataFromAnAPI] = useState(null)
+
+  useEffect(() => {
+    async function getData() {
+      try {
+        const jsonResponse = await CallAPI()
+        setSomeDataFromAnAPI(jsonResponse)
+      } catch (error) {
+        console.error('Error occurred fetching data: ', error);
+      }
     }
-  }
 
-  render() {
-    return <ChildComponent data={this.state.someDataFromAnAPI} />
-  }
+    getData()
+  }, [])
+
+  return <ChildComponent data={someDataFromAnAPI} />
 }
 ```
 
-We start with state containing a null value for the `someDataFromAnAPI` key. In the `async componentDidMount` lifecycle method, we're telling React that we're about to run an asynchronous method (`CallAPI()`). We `await` for `CallAPI()` to finish before setting its resolved response to `jsonResponse` and then setting our Component's state.
+We are using the `useEffect()` hook to tell React what we want to do after our component renders. Notice that `useEffect()` takes two arguments:
 
-Calling `this.setState` triggers the component update process - at this point, `render()` is called again.  Subsequently, the ChildComponent contained within the `render()` function re-renders - it's **data** prop is set to `this.state.someDataFromAnAPI`, which now contains the data that was returned from the API/Web Service - which then is, presumably, used to render content.
+1. A function to run after each render.
+2. (optional) An array of what pieces of state this function should hook into. By default, `useEffect()` runs your function after every component render. Imagine we had 10 pieces of state in our component -- for this particular `useEffect()`, it is unnecessary to run our function if any of the other 9 pieces of state change; we only care about `someDataFromAnAPI`, so that is what we pass as the second argument.
+
+But why do we have an inner function `getData`?
+`useEffect()` cannot be made into an async funtion. Therefore, when fetching data asynchronously, the common pattern is to create an inner `async/await` function, and then call it only if a certain condition is met (in this case, we only call it if we don't have data yet). So the cycle goes: component is mounted and rendered to the DOM --> `useEffect()` is called and sees that we don't have data, so it calls `getData()`, which sets the component state --> the component is re-rendered with the updated data --> `useEffect()` is called again, but it sees we have data, so it does nothing.
+
+There are several other use cases for `useEffect()`, but we'll stick to this for now. Using this pattern, go ahead and refactor `HomePage.js` and `ArticlePage.js` as functional components that use the `useEffect()` hook.
+
+We start with state containing a null value for the `someDataFromAnAPI` key. In the `async getData()` method, we're telling React that we're about to run an asynchronous method (`CallAPI()`). We `await` for `CallAPI()` to finish before setting its resolved response to `jsonResponse` and then setting our Component's state.
+
+Calling `setSomeDataFromAnAPI` triggers the component update process - at this point, our component is re-rendered.  Subsequently, the ChildComponent contained within the render re-renders - it's **data** prop is set to `someDataFromAnAPI`, which now contains the data that was returned from the API/Web Service - which then is, presumably, used to render content.
 
 You will want to follow this pattern within `src/pages/HomePage.js` and `src/pages/ArticlePage.js` and remove references in these files to `src/data/news.json`.
 
@@ -161,51 +167,11 @@ You will want to follow this pattern within `src/pages/HomePage.js` and `src/pag
 
 ** Hint: Careful with where the image lives on the `article` object **
 
-### Functional Components and the useEffect() hook
-At this point, commit your work and open a new branch for your `functional-version`. Here's where we really start to see the differences between class-based and functional components.
-
-Up until this point, we've only used the `useState()` hook to give our components access to state. Now we'll use the `useEffect()` hook to give our functional component the ability to perform side effects. `useEffect()` serves the same purpose as `componentDidMount`, `componentDidUpdate`, and `componentWillUnmount` in React classes, but unified into a single API. According to the [React docs](https://reactjs.org/docs/hooks-effect.html), using the `useEffect()` hook tells React that your component needs to do something after render. React will remember the function you passed (we’ll refer to it as our “effect”), and call it later after performing the DOM updates.
-
-Let's look at the functional version of our above example and then we'll break it down:
-```javascript
-function Component() {
-  const [ someDataFromAnAPI, setSomeDataFromAnAPI ] = React.useState(null);
-
-  React.useEffect(() => {
-    const fetchDataAsync = async () => {
-      try {
-        const jsonResponse = await CallAPI();
-        setSomeDataFromAnAPI(jsonResponse);
-      } catch (error) {
-        console.error('Error occurred fetching data: ', error);
-      }
-    };
-
-    if (someDataFromAnAPI === null) {
-      fetchDataAsync();
-    }
-  }, [someDataFromAnAPI]);
-
-  return <ChildComponent data={someDataFromAnAPI} />
-
-}
-```
-
 As we're accustomed to doing, we first use the `useState()` hook to create a piece of state called `someDateFromAnAPI` and instantiate it as `null`.
-
-Then, we use a `useEffect()` hook to tell React what we want to do after our component renders. Notice that `useEffect()` takes two arguments:
-
-1. A function to run after each render.
-2. (optional) An array of what pieces of state this function should hook into. By default, `useEffect()` runs your function after every component render. Imagine we had 10 pieces of state in our component -- for this particular `useEffect()`, it is unnecessary to run our function if any of the other 9 pieces of state change; we only care about `someDataFromAnAPI`, so that is what we pass as the second argument.
-
-But why do we have an inner function `fetchDataAsync`?
-`useEffect()` cannot be made into an async funtion. Therefore, when fetching data asynchronously, the common pattern is to create an inner `async/await` function, and then call it only if a certain condition is met (in this case, we only call it if we don't have data yet). So the cycle goes: component is mounted and rendered to the DOM --> `useEffect()` is called and sees that we don't have data, so it calls `fetchDataAsync`, which sets the component state --> the component is re-rendered with the updated data --> `useEffect()` is called again, but it sees we have data, so it does nothing.
-
-There are several other use cases for `useEffect()`, but we'll stick to this for now. Using this pattern, go ahead and refactor `HomePage.js` and `ArticlePage.js` as functional components that use the `useEffect()` hook.
 
 ## Refactoring!
 
-Programming is iterative - changes happen.  Ways to simplify our app have been idenfified, and it is up to you to implement these changes.
+Programming is iterative - changes happen.  Ways to simplify our app have been identified, and it is up to you to implement these changes.
 
 **Refactoring Success Criteria:**  After your refactor, ensure that your app still functions as before. Stretch goal: In addition, ensure that no ESLint warnings appear in your browser console (they will appear with a yellow background).
 
