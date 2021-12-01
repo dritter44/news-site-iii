@@ -1,15 +1,19 @@
-import { ListGroupItemHeading, ListGroupItemText } from 'reactstrap';
+import "./articleTeaser.css"
 
 function ArticleTeaser(props) {
   return (
     <div>
-      <ListGroupItemHeading>
+      <div className="title">
         <a onClick={(e) => {
-          e.preventDefault();
-          props.handleTitleClick(props.id);
-          }}>{ props.title }</a>
-      </ListGroupItemHeading>
-      <ListGroupItemText>{ props.createdDate }</ListGroupItemText>
+            e.preventDefault();
+            props.handleTitleClick(props.id);
+        }}>
+          { props.title }
+        </a>
+      </div>
+      <div className="date">
+        { props.created_date }
+      </div>
     </div>
   )
 }

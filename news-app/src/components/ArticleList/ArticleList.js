@@ -1,15 +1,17 @@
+import "./articleList.css"
+import { ListGroup } from 'react-bootstrap';
 import ArticleTeaser from '../ArticleTeaser/ArticleTeaser.js';
-import { ListGroup, ListGroupItem } from 'reactstrap';
+
 
 function ArticleList(props) {
   return (
-    <ListGroup>
+    <ListGroup id="articles">
       { 
         props.articles.map((article, index) => (
-          <ListGroupItem>
+          <ListGroup.Item className={index % 2 ? "odd-item" : "even-item"}>
             <ArticleTeaser { ...article } id={ index + 1 }
               handleTitleClick={ props.handleTitleClick }/>
-          </ListGroupItem>
+          </ListGroup.Item>
         ))
       }
     </ListGroup>

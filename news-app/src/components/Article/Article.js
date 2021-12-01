@@ -1,20 +1,20 @@
-import { Media } from 'reactstrap';
 import "./article.css";
 
 function Article(props) {
   return (
-    <Media>
-      <Media left>
+    <div className="article">
+      <div className="article-image">
         { props.image && <img className="image" src={ props.image }/> }
-      </Media>
-      <Media body className="body">
-        <Media heading>{ props.title }</Media>
-        <p>{ props.createdDate }</p>
+      </div>
+      <div className="article-details">
+        <h2>{ props.title }</h2>
+        <h4>{ props.createdDate }</h4>
         { props.byline && <p>{ props.byline }</p> }
         <p>{ props.abstract }</p>
-      </Media>
-    </Media>
+      </div>
+    </div>
   )
 }
 
 export default Article;
+

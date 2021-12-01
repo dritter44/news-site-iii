@@ -1,0 +1,9 @@
+.title {
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.date {
+  font-size: smaller;
+  font-style: italic;
+}

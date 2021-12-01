@@ -1,14 +1,28 @@
-import { Navbar } from 'reactstrap';
+import { useState } from 'react';
+import { Navbar, Nav } from 'react-bootstrap';
+import sections from '../../data/sections.json'
+import "./appNav.css"
 
 function AppNav(props) {
+  const [navItems, setNavItems] = useState(sections)
+
   return (
-    <Navbar color="light">
+    <Navbar className="bar">
+      <Navbar.Brand>
+        <img src="https://www.codeplatoon.org/wp-content/uploads/2018/10/CP-logo-2018-abbrev-1.png" width="60" />
+        Code Platoon News
+      </Navbar.Brand>
+      <Nav>
       {
-        props.navItems.map((navItem) =>
-          <a href="#" onClick={ () => props.handleNavClick( navItem.value )} >
-            { navItem.label } |
-          </a>
-      )}
+        navItems.map((navItem) => {
+          return (
+            <Nav.Link onClick={ () => props.handleNavClick(navItem.value) }>
+                { navItem.label }
+            </Nav.Link>
+          )
+        })
+      }
+      </Nav>
     </Navbar>
   )
 }

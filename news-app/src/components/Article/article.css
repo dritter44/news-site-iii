@@ -1,7 +1,7 @@
-.image {
-  padding: 20px;
+.article {
+  display: flex;
 }
 
-.body {
+.article > * {
   padding: 20px;
 }
