@@ -12,7 +12,7 @@ function App() {
   // render
   return (
     <div>
-      <AppNav handleNavClick={(clickedItem) => console.log(clickedItem)} />
+      <AppNav />
       <BrowserRouter>
         <Routes>
           <Route exact path="/" element={ <HomePage /> } />

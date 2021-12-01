@@ -16,7 +16,7 @@ function AppNav(props) {
       {
         navItems.map((navItem, index) => {
           return (
-            <Nav.Link key={index} onClick={() => props.handleNavClick(navItem.value)}>
+            <Nav.Link key={index} onClick={() => console.log(navItem.value)}>
                 { navItem.label }
             </Nav.Link>
           )
