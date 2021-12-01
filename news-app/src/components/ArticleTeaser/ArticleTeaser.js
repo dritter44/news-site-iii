@@ -1,15 +1,13 @@
 import "./articleTeaser.css"
+import { Link } from "react-router-dom";
 
 function ArticleTeaser(props) {
   return (
     <div>
       <div className="title">
-        <a onClick={(e) => {
-            e.preventDefault();
-            props.handleTitleClick(props.id);
-        }}>
+        <Link className="title-link" to={`/articles/${props.id}`}>
           { props.title }
-        </a>
+        </Link>
       </div>
       <div className="date">
         { props.created_date }
