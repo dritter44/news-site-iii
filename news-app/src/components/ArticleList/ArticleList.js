@@ -8,7 +8,7 @@ function ArticleList(props) {
     <ListGroup id="articles">
       { 
         props.articles.map((article, index) => (
-          <ListGroup.Item className={index % 2 ? "odd-item" : "even-item"}>
+          <ListGroup.Item key={index} className={index % 2 ? "odd-item" : "even-item"}>
             <ArticleTeaser { ...article } id={ index + 1 }
               handleTitleClick={ props.handleTitleClick }/>
           </ListGroup.Item>
