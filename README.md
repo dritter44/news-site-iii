@@ -169,22 +169,5 @@ You will want to follow this pattern within `src/pages/HomePage.js` and `src/pag
 
 As we're accustomed to doing, we first use the `useState()` hook to create a piece of state called `someDateFromAnAPI` and instantiate it as `null`.
 
-## Refactoring!
 
-Programming is iterative - changes happen.  Ways to simplify our app have been identified, and it is up to you to implement these changes.
 
-**Refactoring Success Criteria:**  After your refactor, ensure that your app still functions as before. Stretch goal: In addition, ensure that no ESLint warnings appear in your browser console (they will appear with a yellow background).
-
-**1. AppNav Component & Section Data**
-
-At the moment, the data that determines what appears in the main navigation is contained within our `data` directory. Your product managers have decided to slim down the news sections that we present on the site, and your tech lead has decided that these sections don't make sense classified as "data".
-
-A new JSON file has already been created - `src/config/sections.json`.
-
-  1. Import `src/config/sections.json` into `AppNav.js` and use it to construct the navigation, and remove
-  2. The `navItems` in `App.js`'s state is no longer needed, and that's the only piece of data in state.  That said, we can remove `App.js`'s constructor entirely.
-
-**2. ArticleTeaser Link**
-At the moment, we're passing down a callback function from `HomePage.js` to `ArticleList.js` to `ArticleTeaser.js` that handles redirection when the title in ArticleTeaser is clicked.  This logic was overly and unnecessarily complicated.
-
-Instead, we can just utilize React Router's [Link](https://github.com/ReactTraining/react-router/blob/master/packages/react-router-dom/docs/api/Link.md) component in `ArticleTeaser.js`.  Using this, we can remove the callback function that's set in HomePage.js and passed down to ArticleList.js - remove these.
