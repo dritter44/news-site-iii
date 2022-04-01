@@ -1,14 +1,27 @@
+import { useState, useEffect } from "react"
 import ArticleList from '../components/ArticleList/ArticleList.js'
-import News from '../data/news.json';
 
 
 function HomePage() {
+  // states
+  const [articles, setArticles] = useState([])
+  
+  // render
   return (
     <div>
-      <ArticleList articles={News} />
+      { 
+        articles 
+          ? <ArticleList articles={articles} />
+          : <span>404: Error retrieving articles.</span>
+      }
     </div>
   )
 }
 
 export default HomePage;
+
+
+
+
+
 
